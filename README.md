@@ -1,11 +1,9 @@
 # Axamit.test.task
 
 ## Requirements
-* Java 1.8 (for running or compiling Zoe.jar)
-* maven 3 (for compiling Zoe.jar)
+* Java 1.8 (for running or compiling axamit-strings-test-master.war)
+* maven 3 (for compiling axamit-strings-test-master.war)
 * Git (for pulling project directory from repository)
-
-
 
 ## Description
 
