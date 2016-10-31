@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<annotation-driven />
+    <context:property-placeholder location="classpath:config.properties"/>
+    <context:component-scan base-package="com.axamit.spring" />
+
+    <!--&lt;!&ndash; Resolves views selected for rendering by @controllers to .jsp resources-->
+		<!--in the /WEB-INF/views directory &ndash;&gt;-->
+	<beans:bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+
+    <beans:bean
+            class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <beans:property name="messageConverters">
+            <beans:list>
+                <beans:bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <beans:property name="objectMapper" ref="jacksonObjectMapper" />
+                </beans:bean>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+
+    <!-- jackson configuration : http://stackoverflow.com/questions/3661769 -->
+    <!--<beans:bean id="jacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />-->
+    <!--<beans:bean id="jacksonSerializationConfig" class="com.fasterxml.jackson.databind.SerializationConfig"-->
+                <!--factory-bean="jacksonObjectMapper" factory-method="getSerializationConfig" />-->
+    <!--<beans:bean-->
+            <!--class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">-->
+        <!--<beans:property name="targetObject" ref="jacksonSerializationConfig" />-->
+        <!--<beans:property name="targetMethod" value="setSerializationInclusion" />-->
+        <!--<beans:property name="arguments">-->
+            <!--<beans:list>-->
+                <!--<beans:value type="org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion">NON_DEFAULT</beans:value>-->
+            <!--</beans:list>-->
+        <!--</beans:property>-->
+    <!--</beans:bean>-->
+    <beans:bean id="jacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper" />
+    <beans:bean
+            class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <beans:property name="targetObject" ref="jacksonObjectMapper" />
+        <beans:property name="targetMethod" value="configure" />
+        <beans:property name="arguments">
+            <beans:list>
+                <beans:value type="com.fasterxml.jackson.databind.DeserializationFeature">FAIL_ON_UNKNOWN_PROPERTIES</beans:value>
+                <beans:value>false</beans:value>
+            </beans:list>
+        </beans:property>
+    </beans:bean>
+
+    <beans:bean id="stringsService" class="com.axamit.spring.service.StringsServiceImpl">
+        <beans:property name="stringsSorter" ref="${provided.sorter.bean.name}" />
+    </beans:bean>
+
+</beans:beans>
